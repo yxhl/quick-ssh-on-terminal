@@ -1,0 +1,82 @@
+{
+  "name": "quick-ssh-on-terminal",
+  "displayName": "quick-ssh-on-terminal",
+  "description": "",
+  "version": "0.0.1",
+  "author": {
+    "name": "yxhl",
+    "email": "mingen_li@outlook.com"
+  },
+  "engines": {
+    "vscode": "^1.87.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ssh-here-tree.clickconnect",
+        "title": "Connect to SSH host",
+        "icon": "$(play)"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "SSH Here",
+        "properties": {
+          "ssh-here.openSSHInEditor": {
+            "type": "boolean",
+            "default": true,
+            "description": "Open SSH terminals in the editor area"
+          }
+        }
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "ssh-here-tree",
+          "name": "host-list",
+          "icon": "$(remote-explorer)",
+          "contextualTitle": "SSH-Here"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "ssh-here-tree.clickconnect",
+          "when": "view == ssh-here-tree",
+          "group": "inline"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.87.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-cli": "^0.0.8",
+    "@vscode/test-electron": "^2.3.9"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "npm": "^10.5.0",
+    "ssh-config": "^4.3.0"
+  }
+}
