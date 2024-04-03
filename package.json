@@ -5,7 +5,8 @@
   "version": "0.0.1",
   "author": {
     "name": "yxhl",
-    "email": "mingen_li@outlook.com"
+    "email": "mingen_li@outlook.com",
+    "url": "https://github.com/yxhl"
   },
   "engines": {
     "vscode": "^1.87.0"
@@ -13,6 +14,9 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yxhl/quick-ssh-on-terminal.git"},
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
