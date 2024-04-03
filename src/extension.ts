@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
     if (rootPath !== undefined) {
         const sshHereTreeViewProvider = new treeViewProvider(rootPath);
 
-        context.subscriptions.push(vscode.commands.registerCommand('ssh-here-tree.clickconnect', args => {
+        context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal.clickconnect', args => {
             if (args.label !== undefined) {
                 sshHereTreeViewProvider.sshConnectAction(args.label);
             } else {
@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }));
 
-        context.subscriptions.push(vscode.window.registerTreeDataProvider('ssh-here-tree', sshHereTreeViewProvider));
+        context.subscriptions.push(vscode.window.registerTreeDataProvider('quick-ssh-on-terminal', sshHereTreeViewProvider));
     } else {
         vscode.window.showErrorMessage('No SSH config file found.');
     }

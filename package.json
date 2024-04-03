@@ -23,16 +23,16 @@
   "contributes": {
     "commands": [
       {
-        "command": "ssh-here-tree.clickconnect",
+        "command": "quick-ssh-on-terminal.clickconnect",
         "title": "Connect to SSH host",
         "icon": "$(play)"
       }
     ],
     "configuration": [
       {
-        "title": "SSH Here",
+        "title": "Quick SSH On Terminal",
         "properties": {
-          "ssh-here.openSSHInEditor": {
+          "quick-ssh-on-terminal.openSSHInEditor": {
             "type": "boolean",
             "default": true,
             "description": "Open SSH terminals in the editor area"
@@ -43,18 +43,18 @@
     "views": {
       "explorer": [
         {
-          "id": "ssh-here-tree",
+          "id": "quick-ssh-on-terminal",
           "name": "host-list",
           "icon": "$(remote-explorer)",
-          "contextualTitle": "SSH-Here"
+          "contextualTitle": "SSH-List"
         }
       ]
     },
     "menus": {
       "view/item/context": [
         {
-          "command": "ssh-here-tree.clickconnect",
-          "when": "view == ssh-here-tree",
+          "command": "quick-ssh-on-terminal.clickconnect",
+          "when": "view == quick-ssh-on-terminal",
           "group": "inline"
         }
       ]

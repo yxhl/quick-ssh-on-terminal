@@ -45,7 +45,7 @@ export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
 
     sshConnectAction(node: Dependency) {
         vscode.window.showInformationMessage(`Connect to ${node}`);
-        const config = vscode.workspace.getConfiguration('ssh-here');
+        const config = vscode.workspace.getConfiguration('quick-ssh-on-terminal');
         const openSSHInEditor = config.get<boolean>('openSSHInEditor', false);
         const terminalName = `${node}`;
 
