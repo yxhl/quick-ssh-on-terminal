@@ -5,10 +5,11 @@ import * as vscode from 'vscode';
 import { treeViewProvider } from './treeDataProvider';
 import * as os from 'os';
 import * as fs from 'fs';
+import SSHConfig from 'ssh-config';
 
+const qsotTreeViewProvider = new treeViewProvider(undefined);
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-
 function findSSHConfigPaths(): string[] {
     const homeDir = os.homedir();
     const sshConfigPaths = [
@@ -35,25 +36,95 @@ function locationSSHConfigPath(): string|undefined {
     });
     return rootPath;
 }
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal.setting', () => {
+		settingSshPath(context);
+	}));
+	activateTreeViewProvider(context);
 
-    let rootPath = locationSSHConfigPath();
-    if (rootPath !== undefined) {
-        const sshHereTreeViewProvider = new treeViewProvider(rootPath);
+	let rootPath = locationSSHConfigPath();
+	if (rootPath === undefined) {
+		settingSshPath(context);
+	} else {
+		qsotTreeViewProvider.settingSshConfigPath(rootPath);
+	}
 
-        context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal.clickconnect', args => {
-            if (args.label !== undefined) {
-                sshHereTreeViewProvider.sshConnectAction(args.label);
-            } else {
-                vscode.window.showErrorMessage('No SSH host selected.');
-            }
-        }));
-
-        context.subscriptions.push(vscode.window.registerTreeDataProvider('quick-ssh-on-terminal', sshHereTreeViewProvider));
-    } else {
-        vscode.window.showErrorMessage('No SSH config file found.');
-    }
+	return;
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
+
+async function settingSshPath(context: vscode.ExtensionContext): Promise<string | undefined> {
+	await vscode.window.showQuickPick(
+		[
+			{
+				label: path.join(os.homedir(), '.ssh', 'config'),
+				description: 'Default path'
+			},
+			{
+				label: path.join(os.homedir(), '.ssh', 'config.d', 'qsot.config'),
+				description: 'QSOT default path'
+			},
+			// {
+			// 	label: 'Custom',
+			// 	description: 'Please input the ssh config file path'
+			// }
+		],
+		{
+			placeHolder: 'Please select the ssh config file path'
+		}
+	).then(async (selected) => {
+		if (selected?.label === 'Custom') {
+			vscode.window.showInputBox({
+				placeHolder: 'Please input the ssh config file path'
+			}).then(async (value) => {
+				if (value && fs.existsSync(value)) {
+					this.qsotTreeViewProvider.settingSshConfigPath(value);
+					return selected?.label;
+				}
+			});
+		} else {
+			if (selected?.label && !fs.existsSync(selected?.label)) {
+				fs.mkdirSync(path.dirname(selected?.label));
+				fs.writeFileSync(selected?.label, '');
+			}
+			if (selected?.label) {
+				qsotTreeViewProvider.settingSshConfigPath(selected?.label);
+				qsotTreeViewProvider.refresh();
+			}
+			return selected?.label;
+		}
+		return undefined;
+	});
+	return undefined;
+}
+
+function activateTreeViewProvider(context: vscode.ExtensionContext): treeViewProvider {
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal.refresh', () => 
+		qsotTreeViewProvider.refresh())
+	);
+
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal.add', () => 
+		qsotTreeViewProvider.add())
+	);
+
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal.clickconnect', args => {
+		if (args.label !== undefined) {
+			qsotTreeViewProvider.sshConnectAction(args.label);
+		} else {
+			vscode.window.showErrorMessage('No SSH host selected.');
+		}
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal.openSshConfig', () => {
+		qsotTreeViewProvider.openSshConfig();
+	}));
+
+	context.subscriptions.push(vscode.window.registerTreeDataProvider('quick-ssh-on-terminal', qsotTreeViewProvider));
+	return qsotTreeViewProvider;
+}
+
+function expect(config: any) {
+	throw new Error('Function not implemented.');
+}

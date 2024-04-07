@@ -2,9 +2,15 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import SSHConfig from 'ssh-config';
+import { sshCommandParser } from './sshCommandParser';
 
 export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
-    constructor(private sshConfigPath: string) { }
+    constructor(private sshConfigPath: string | undefined) {}
+    private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined | null | void> = new vscode.EventEmitter<Dependency | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<Dependency | undefined | null | void> = this._onDidChangeTreeData.event;
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
 
     getTreeItem(element: Dependency): vscode.TreeItem {
         return element;
@@ -61,6 +67,41 @@ export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
         terminal.sendText(`ssh ${node}`);
         terminal.show();
         return Promise.resolve([]);
+    }
+
+    settingSshConfigPath(sshConfigPath: string) {
+        this.sshConfigPath = sshConfigPath;
+    }
+
+    add() {
+        if (!this.sshConfigPath) {
+            vscode.window.showErrorMessage('Please select a config and try again.');
+            return;
+        }
+
+        let a = vscode.window.showInputBox({
+            placeHolder: 'example: ssh root@host:port',
+            prompt: 'Please input the ssh command'
+        }).then(command => {
+            if (command && this.sshConfigPath) {
+                let sessJson = new sshCommandParser(command).parse();
+                if (sessJson) {
+                    const sshConfigContent = fs.readFileSync(this.sshConfigPath, 'utf-8');
+                    const config = SSHConfig.parse(sshConfigContent);
+                    config.append(sessJson);
+                    fs.writeFileSync(this.sshConfigPath, SSHConfig.stringify(config));
+                    this.refresh();
+                }
+            }
+        });
+    }
+
+    openSshConfig() {
+        if (this.sshConfigPath && fs.existsSync(this.sshConfigPath)) {
+            vscode.window.showTextDocument(vscode.Uri.file(this.sshConfigPath));
+        } else {
+            vscode.window.showErrorMessage("SSH config file not found");
+        }
     }
 }
 

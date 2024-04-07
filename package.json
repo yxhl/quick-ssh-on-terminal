@@ -2,7 +2,7 @@
   "name": "quick-ssh-on-terminal",
   "displayName": "quick-ssh-on-terminal",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "yxhl",
   "author": {
     "name": "yxhl",
@@ -17,7 +17,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yxhl/quick-ssh-on-terminal.git"},
+    "url": "https://github.com/yxhl/quick-ssh-on-terminal.git"
+  },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -26,6 +27,26 @@
         "command": "quick-ssh-on-terminal.clickconnect",
         "title": "Connect to SSH host",
         "icon": "$(play)"
+      },
+      {
+        "command": "quick-ssh-on-terminal.refresh",
+        "title": "Reload host list",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "quick-ssh-on-terminal.add",
+        "title": "Add SSH host",
+        "icon": "$(plus)"
+      },
+      {
+        "command": "quick-ssh-on-terminal.setting",
+        "title": "Setting SSH Config",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "quick-ssh-on-terminal.openSshConfig",
+        "title": "Open SSH Config file",
+        "icon": "$(pencil)"
       }
     ],
     "configuration": [
@@ -40,8 +61,17 @@
         }
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "quick-ssh-on-terminal-viewsContainers",
+          "title": "Package Explorer",
+          "icon": "$(remote-explorer)"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "quick-ssh-on-terminal-viewsContainers": [
         {
           "id": "quick-ssh-on-terminal",
           "name": "host-list",
@@ -51,6 +81,24 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "quick-ssh-on-terminal.refresh",
+          "group": "navigation"
+        },
+        {
+          "command": "quick-ssh-on-terminal.add",
+          "group": "navigation"
+        },
+        {
+          "command": "quick-ssh-on-terminal.setting",
+          "group": "navigation"
+        },
+        {
+          "command": "quick-ssh-on-terminal.openSshConfig",
+          "group": "navigation"
+        }
+      ],
       "view/item/context": [
         {
           "command": "quick-ssh-on-terminal.clickconnect",
@@ -61,27 +109,29 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run compile",
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "pnpm run compile && pnpm run lint",
+    "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.87.0",
     "@types/mocha": "^10.0.6",
-    "@types/node": "18.x",
+    "@types/node": "^18.19.29",
+    "@types/vscode": "^1.87.0",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.3.3",
     "@vscode/test-cli": "^0.0.8",
-    "@vscode/test-electron": "^2.3.9"
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "fs": "^0.0.1-security",
     "npm": "^10.5.0",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
     "ssh-config": "^4.3.0"
   }
 }
