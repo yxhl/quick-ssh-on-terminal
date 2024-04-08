@@ -4,6 +4,7 @@ import * as path from 'path';
 import SSHConfig from 'ssh-config';
 import { sshCommandParser } from './sshCommandParser';
 import { Dependency } from './dependency';
+import { stringify } from 'querystring';
 
 export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
     constructor(private sshConfigPath: string | undefined) {}
@@ -65,8 +66,20 @@ export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
             }
         );
 
-        terminal.sendText(`ssh ${node}`);
-        terminal.show();
+        var cmdjs = {hostname: '', port: '22', usr: ''};
+        if (this.sshConfigPath && node) {
+            const config = SSHConfig.parse(fs.readFileSync(this.sshConfigPath, 'utf-8')).compute({ Host: `${node}` });
+            cmdjs.hostname = config.Hostname.toString();
+            cmdjs.usr = config.User.toString();
+            if (config.Port === undefined) {
+                cmdjs.port = '22';
+            } else {
+                cmdjs.port = config.Port.toString();
+            }
+            let cmd =  cmdjs.usr + '@' + cmdjs.hostname + ' -p ' + cmdjs.port;
+            terminal.sendText(`ssh ${cmd}`);
+            terminal.show();
+        }
         return Promise.resolve([]);
     }
 

@@ -21,7 +21,7 @@ export class sshCommandParser {
 		}
 
 		const [username, hostAndPort] = usernameHostPort.split('@');
-		const [host, portStr] = hostAndPort.split(':');
+		const [host, portStr] = hostAndPort.split('-p');
 
 		let port: number | undefined = undefined;
 		if (portStr !== '' && portStr !== undefined) {
