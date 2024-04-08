@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import SSHConfig from 'ssh-config';
 import { sshCommandParser } from './sshCommandParser';
+import { Dependency } from './dependency';
 
 export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
     constructor(private sshConfigPath: string | undefined) {}
@@ -80,7 +81,7 @@ export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
         }
 
         let a = vscode.window.showInputBox({
-            placeHolder: 'example: ssh root@host:port',
+            placeHolder: 'root@host:port',
             prompt: 'Please input the ssh command'
         }).then(command => {
             if (command && this.sshConfigPath) {
@@ -99,22 +100,7 @@ export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
     openSshConfig() {
         if (this.sshConfigPath && fs.existsSync(this.sshConfigPath)) {
             vscode.window.showTextDocument(vscode.Uri.file(this.sshConfigPath));
-        } else {
-            vscode.window.showErrorMessage("SSH config file not found");
         }
     }
 }
 
-class Dependency extends vscode.TreeItem {
-    constructor(
-        public readonly label: string,
-        private version: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState
-    ) {
-        super(label, collapsibleState);
-        this.tooltip = `${this.label}-${this.version}`;
-        this.description = this.version;
-    }
-
-    iconPath = new vscode.ThemeIcon('server');
-}

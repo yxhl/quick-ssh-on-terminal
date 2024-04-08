@@ -2,7 +2,7 @@
   "name": "quick-ssh-on-terminal",
   "displayName": "quick-ssh-on-terminal",
   "description": "",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "publisher": "yxhl",
   "author": {
     "name": "yxhl",
@@ -21,6 +21,7 @@
   },
   "activationEvents": [],
   "main": "./out/extension.js",
+  "icon": "icon.png",
   "contributes": {
     "commands": [
       {
@@ -47,6 +48,26 @@
         "command": "quick-ssh-on-terminal.openSshConfig",
         "title": "Open SSH Config file",
         "icon": "$(pencil)"
+      },
+      {
+        "command": "quick-ssh-on-terminal-cmd.send",
+        "title": "Send to terminal",
+        "icon": "$(play)"
+      },
+      {
+        "command": "quick-ssh-on-terminal-cmd.add",
+        "title": "Add",
+        "icon": "$(plus)"
+      },
+      {
+        "command": "quick-ssh-on-terminal-cmd.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "quick-ssh-on-terminal-cmd.remove",
+        "title": "Remove",
+        "icon": "$(trash)"
       }
     ],
     "configuration": [
@@ -57,6 +78,15 @@
             "type": "boolean",
             "default": true,
             "description": "Open SSH terminals in the editor area"
+          },
+          "quick-ssh-on-terminal.cmdList": {
+            "type": "array",
+            "default": [
+              {
+                "tag": "ls",
+                "cmd": "ls"
+              }
+            ]
           }
         }
       }
@@ -65,7 +95,7 @@
       "activitybar": [
         {
           "id": "quick-ssh-on-terminal-viewsContainers",
-          "title": "Package Explorer",
+          "title": "Quick SSH",
           "icon": "$(remote-explorer)"
         }
       ]
@@ -75,8 +105,12 @@
         {
           "id": "quick-ssh-on-terminal",
           "name": "host-list",
-          "icon": "$(remote-explorer)",
-          "contextualTitle": "SSH-List"
+          "icon": "$(remote-explorer)"
+        },
+        {
+          "id": "quick-ssh-on-terminal-cmd",
+          "name": "cmd-list",
+          "icon": "$(list-selection)"
         }
       ]
     },
@@ -84,19 +118,33 @@
       "view/title": [
         {
           "command": "quick-ssh-on-terminal.refresh",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal"
         },
         {
           "command": "quick-ssh-on-terminal.add",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal"
         },
         {
           "command": "quick-ssh-on-terminal.setting",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal"
         },
         {
           "command": "quick-ssh-on-terminal.openSshConfig",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal"
+        },
+        {
+          "command": "quick-ssh-on-terminal-cmd.add",
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal-cmd"
+        },
+        {
+          "command": "quick-ssh-on-terminal-cmd.refresh",
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal-cmd"
         }
       ],
       "view/item/context": [
@@ -104,6 +152,16 @@
           "command": "quick-ssh-on-terminal.clickconnect",
           "when": "view == quick-ssh-on-terminal",
           "group": "inline"
+        },
+        {
+          "command": "quick-ssh-on-terminal-cmd.send",
+          "group": "inline",
+          "when": "view == quick-ssh-on-terminal-cmd"
+        },
+        {
+          "command": "quick-ssh-on-terminal-cmd.remove",
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal-cmd"
         }
       ]
     }

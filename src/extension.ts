@@ -5,14 +5,16 @@ import * as vscode from 'vscode';
 import { treeViewProvider } from './treeDataProvider';
 import * as os from 'os';
 import * as fs from 'fs';
-import SSHConfig from 'ssh-config';
+import { cmdTreeViewProvider } from './cmd';
 
 const qsotTreeViewProvider = new treeViewProvider(undefined);
+const qsotCmdTreeViewProvider = new cmdTreeViewProvider();
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 function findSSHConfigPaths(): string[] {
     const homeDir = os.homedir();
     const sshConfigPaths = [
+		path.join(homeDir, '.ssh', 'config.d', 'qsot.config'),
         path.join(homeDir, '.ssh', 'config'),
         path.join(homeDir, '.ssh', 'config.d', '*.conf') // Include additional patterns if needed
     ];
@@ -49,6 +51,34 @@ export async function activate(context: vscode.ExtensionContext) {
 		qsotTreeViewProvider.settingSshConfigPath(rootPath);
 	}
 
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal-cmd.send', args => {
+		if (args.label !== undefined) {
+			qsotCmdTreeViewProvider.sentToTerminal(args);
+		} else {
+			vscode.window.showErrorMessage('No cmd selected.');
+		}
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal-cmd.add', async () => {
+		await qsotCmdTreeViewProvider.add();
+		qsotCmdTreeViewProvider.refresh();
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal-cmd.refresh', () => {
+		qsotCmdTreeViewProvider.refresh();
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal-cmd.remove', args => {
+		if (args.label !== undefined) {
+			qsotCmdTreeViewProvider.remove(args);
+			qsotCmdTreeViewProvider.refresh();
+		} else {
+			vscode.window.showErrorMessage('No cmd selected.');
+		}
+	}));
+
+	context.subscriptions.push(vscode.window.registerTreeDataProvider('quick-ssh-on-terminal-cmd', qsotCmdTreeViewProvider));
+
 	return;
 }
 
@@ -59,12 +89,12 @@ async function settingSshPath(context: vscode.ExtensionContext): Promise<string 
 	await vscode.window.showQuickPick(
 		[
 			{
-				label: path.join(os.homedir(), '.ssh', 'config'),
-				description: 'Default path'
-			},
-			{
 				label: path.join(os.homedir(), '.ssh', 'config.d', 'qsot.config'),
 				description: 'QSOT default path'
+			},
+			{
+				label: path.join(os.homedir(), '.ssh', 'config'),
+				description: 'Default path'
 			},
 			// {
 			// 	label: 'Custom',
@@ -80,7 +110,7 @@ async function settingSshPath(context: vscode.ExtensionContext): Promise<string 
 				placeHolder: 'Please input the ssh config file path'
 			}).then(async (value) => {
 				if (value && fs.existsSync(value)) {
-					this.qsotTreeViewProvider.settingSshConfigPath(value);
+					qsotTreeViewProvider.settingSshConfigPath(value);
 					return selected?.label;
 				}
 			});
