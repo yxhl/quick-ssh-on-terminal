@@ -77,6 +77,24 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}));
 
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal-cmd.editCmd', async args => {
+		if (args.label !== undefined) {
+			await qsotCmdTreeViewProvider.editCmd(args);
+			qsotCmdTreeViewProvider.refresh();
+		} else {
+			vscode.window.showErrorMessage('No cmd selected.');
+		}
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('quick-ssh-on-terminal-cmd.editTag', async args => {
+		if (args.label !== undefined) {
+			await qsotCmdTreeViewProvider.editTag(args);
+			qsotCmdTreeViewProvider.refresh();
+		} else {
+			vscode.window.showErrorMessage('No cmd selected.');
+		}
+	}));
+
 	context.subscriptions.push(vscode.window.registerTreeDataProvider('quick-ssh-on-terminal-cmd', qsotCmdTreeViewProvider));
 
 	return;

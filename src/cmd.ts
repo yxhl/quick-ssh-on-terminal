@@ -102,4 +102,70 @@ export class cmdTreeViewProvider implements vscode.TreeDataProvider<Dependency> 
         this.config = this.config?.filter(cmd => cmd.tag !== node.label);
         vscode.workspace.getConfiguration('quick-ssh-on-terminal').update('cmdList', this.config);
     }
+
+    async editCmd (node: Dependency) {
+        if (vscode.workspace.getWorkspaceFolder === undefined) {
+            vscode.window.showErrorMessage("Please open a workspace first.");
+            return;
+        }
+        let cmdList = this.getCmdList();
+        if (cmdList === undefined) {
+            return;
+        }
+        let index = cmdList.findIndex( (cmd) => {
+            if (cmd['tag'] === node.label) {
+                return true;
+            }
+        });
+        if (this.config) {
+            await vscode.window.showInputBox(
+                {
+                    prompt: "Please input command",
+                    placeHolder: cmdList[index]['cmd'],
+                    value: cmdList[index]['cmd']
+                },
+            ).then(async (cmd) => {
+                if (cmd !== undefined && this.config) {
+                    this.config[index] = {
+                        tag: node.label,
+                        cmd: cmd
+                    };
+                    vscode.workspace.getConfiguration('quick-ssh-on-terminal').update('cmdList', this.config);
+                }
+            });
+        };
+    }
+
+    async editTag (node: Dependency) {
+        if (vscode.workspace.getWorkspaceFolder === undefined) {
+            vscode.window.showErrorMessage("Please open a workspace first.");
+            return;
+        }
+        let cmdList = this.getCmdList();
+        if (cmdList === undefined) {
+            return;
+        }
+        let index = cmdList.findIndex( (cmd) => {
+            if (cmd['tag'] === node.label) {
+                return true;
+            }
+        });
+        if (this.config) {
+            await vscode.window.showInputBox(
+                {
+                    prompt: "Please input tag",
+                    placeHolder: node.label,
+                    value: node.label
+                },
+            ).then(async (tag) => {
+                if (tag !== undefined && this.config) {
+                    this.config[index] = {
+                        tag: tag,
+                        cmd: cmdList[index]['cmd']
+                    };
+                    vscode.workspace.getConfiguration('quick-ssh-on-terminal').update('cmdList', this.config);
+                }
+            });
+        };
+    }
 }

@@ -1,8 +1,8 @@
 {
   "name": "quick-ssh-on-terminal",
   "displayName": "quick-ssh-on-terminal",
-  "description": "",
-  "version": "1.0.1",
+  "description": "View, Click and Connect",
+  "version": "1.0.4",
   "publisher": "yxhl",
   "author": {
     "name": "yxhl",
@@ -68,6 +68,16 @@
         "command": "quick-ssh-on-terminal-cmd.remove",
         "title": "Remove",
         "icon": "$(trash)"
+      },
+      {
+        "command": "quick-ssh-on-terminal-cmd.editCmd",
+        "title": "Edit Command",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "quick-ssh-on-terminal-cmd.editTag",
+        "title": "Edit Tag",
+        "icon": "$(pencil)"
       }
     ],
     "configuration": [
@@ -160,6 +170,16 @@
         },
         {
           "command": "quick-ssh-on-terminal-cmd.remove",
+          "group": "navigation",
+          "when": "view == quick-ssh-on-terminal-cmd"
+        },
+        {
+          "command": "quick-ssh-on-terminal-cmd.editTag",
+          "group": "inline",
+          "when": "view == quick-ssh-on-terminal-cmd"
+        },
+        {
+          "command": "quick-ssh-on-terminal-cmd.editCmd",
           "group": "navigation",
           "when": "view == quick-ssh-on-terminal-cmd"
         }

@@ -8,6 +8,13 @@ Open ssh connection on terminal
 2. Run cmd quickly by click button. (Open a workspace frist).
 
 ## Release Notes
+### v1.0.4
+
+1. Add edti command button.
+
+### v1.0.3
+
+1. Fix some problems.
 
 ### v1.0.0
 1. Add quickly command feature.

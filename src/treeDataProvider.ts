@@ -66,20 +66,22 @@ export class treeViewProvider implements vscode.TreeDataProvider<Dependency> {
             }
         );
 
-        var cmdjs = {hostname: '', port: '22', usr: ''};
-        if (this.sshConfigPath && node) {
-            const config = SSHConfig.parse(fs.readFileSync(this.sshConfigPath, 'utf-8')).compute({ Host: `${node}` });
-            cmdjs.hostname = config.Hostname.toString();
-            cmdjs.usr = config.User.toString();
-            if (config.Port === undefined) {
-                cmdjs.port = '22';
-            } else {
-                cmdjs.port = config.Port.toString();
-            }
-            let cmd =  cmdjs.usr + '@' + cmdjs.hostname + ' -p ' + cmdjs.port;
-            terminal.sendText(`ssh ${cmd}`);
-            terminal.show();
-        }
+        // var cmdjs = {hostname: '', port: '22', usr: ''};
+        // if (this.sshConfigPath && node) {
+        //     const config = SSHConfig.parse(fs.readFileSync(this.sshConfigPath, 'utf-8')).compute({ Host: `${node}` });
+        //     cmdjs.hostname = config.Hostname.toString();
+        //     cmdjs.usr = config.User.toString();
+        //     if (config.Port === undefined) {
+        //         cmdjs.port = '22';
+        //     } else {
+        //         cmdjs.port = config.Port.toString();
+        //     }
+        //     let cmd =  cmdjs.usr + '@' + cmdjs.hostname + ' -p ' + cmdjs.port;
+        //     terminal.sendText(`ssh ${cmd}`);
+        //     terminal.show();
+        // }
+        terminal.sendText(`ssh ${node}`);
+        terminal.show();
         return Promise.resolve([]);
     }
 
